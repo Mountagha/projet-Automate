@@ -35,6 +35,8 @@ class Automate:
 			self.etatsFinaux.append(etat)
 	
 	def afficher(self):
+		print("Les différentes transitions avant la determinisation ")
+		print(self.handlers)
 		graph = Digraph(comment="l'affichage du graphe")
 		for lettre in self.listeAlphabets:
 			graph.node(lettre)
@@ -45,7 +47,7 @@ class Automate:
 				nomTransition = str(cle[1])
 				graph.edge(etatPrecedent, str(etatSuivant), label=nomTransition)
 		graph.render('output.gv', view=True)
-	
+
 	def determiniser(self):
 		cas = ("0",)
 		casATraiter = []
@@ -55,8 +57,8 @@ class Automate:
 		
 		for cas in casATraiter:
 			if cas not in casTraites:
-				casSuivants = []
 				for a in self.listeTransitions:
+					casSuivants = []
 					for etat in cas:
 						tupleEtatTransition = (etat,a)
 						if self.handlers.has_key(tupleEtatTransition):
@@ -103,7 +105,7 @@ class Automate:
 	        	print("cas : {} via transition : {} --> {} ".format(cle[0], cle[1], valeur))		
 			graphAFD.edge(str(cle[0]), str(valeur), label=str(cle[1]))
 		
-		graphAFD.render('outputAFD.gv', view=True)
+		#graphAFD.render('outputAFD.gv', view=True)
 
 
 
