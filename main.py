@@ -15,7 +15,7 @@ monAutomate.ajouterTransition("2","a", ["2"])
 monAutomate.ajouterTransition("2","b", ["2"])
 monAutomate.fixerEtatInitial("0")
 monAutomate.fixerEtatsFinaux("1","2")
-#monAutomate.afficher()
+monAutomate.afficher()
 monAutomate.determiniser()
 monAutomate.afficherAFD()
 

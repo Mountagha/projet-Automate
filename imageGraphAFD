@@ -1,0 +1,11 @@
+graph {
+	A
+	B
+	C
+		A -- B [label=a]
+		B -- B [label=b]
+		B -- C [label=a]
+		C -- C [label=a]
+		C -- C [label=b]
+		A -- A [label=b]
+}

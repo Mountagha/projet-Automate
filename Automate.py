@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-  coding:utf-8 -*-
 
-from graphviz import Digraph
+import graphviz
 
 class Automate:
 
@@ -37,19 +37,20 @@ class Automate:
 	def afficher(self):
 		print("Les différentes transitions avant la determinisation ")
 		print(self.handlers)
-		graph = Digraph(comment="l'affichage du graphe")
+		graphAFN = graphviz.Graph(format='png')
 		for lettre in self.listeAlphabets:
-			graph.node(lettre)
+			graphAFN.node(lettre)
 
 		for cle, valeur in self.handlers.items():
 			for etatSuivant in valeur:
 				etatPrecedent = str(cle[0])
 				nomTransition = str(cle[1])
-				graph.edge(etatPrecedent, str(etatSuivant), label=nomTransition)
-		graph.render('output.gv', view=True)
+				graphAFN.edge(etatPrecedent, str(etatSuivant), label=nomTransition)
+		print(graphAFN.source)
+		output = graphAFN.render(filename='imageGraphAFN')
 
 	def determiniser(self):
-		cas = ("0",)
+		cas = tuple(self.etatInitial) 
 		casATraiter = []
 		casTraites = []
 		transitionsEntreCas = {}
@@ -85,7 +86,7 @@ class Automate:
 		print("Le nouveau alphabet : {} ".format(self.AFDListeAlphabets))
 		print("le dicNewAlphabets : {} ".format(dictNewAlphabets))
 		for cle, valeur in transitionsEntreCas.items():
-			print("cas : {} via transition : {} --> {}".format(cle[0],cle[1], valeur))
+			print("cas : {} via transition , label=noeud: {} --> {}".format(cle[0],cle[1], valeur))
 			cas = cle[0]
 			transition = cle[1]
 			casSuivant = valeur
@@ -96,17 +97,17 @@ class Automate:
 
 
 	def afficherAFD(self):
-		graphAFD = Digraph(comment="le graphe determinisé", encoding="utf-8")
+		graphAFD = graphviz.Graph(format='png')
+		print(self.AFDListeAlphabets)
 		for a in self.AFDListeAlphabets:
-			print("Alphabet : {} ".format(a))
+			#print("Alphabet : {} ".format(a))
 			graphAFD.node(a)
-		print(self.AFDHandlers)
+			#print(graphAFD.node(a))
+		print(graphAFD.source)
 		for cle, valeur in self.AFDHandlers.items():
-	        	print("cas : {} via transition : {} --> {} ".format(cle[0], cle[1], valeur))		
+	        	#print("cas : {} via transition : {} --> {} ".format(cle[0], cle[1], valeur))		
 			graphAFD.edge(str(cle[0]), str(valeur), label=str(cle[1]))
+		print(graphAFD.source)
 		
-		#graphAFD.render('outputAFD.gv', view=True)
-
-
-
+		filenameAFD = graphAFD.render(filename='imageGraphAFD')
 			
