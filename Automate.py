@@ -37,7 +37,7 @@ class Automate:
 	def afficher(self):
 		print("Les différentes transitions avant la determinisation ")
 		print(self.handlers)
-		graphAFN = graphviz.Graph(format='png')
+		graphAFN = graphviz.Digraph(format='png')
 		for lettre in self.listeAlphabets:
 			graphAFN.node(lettre)
 
@@ -97,7 +97,7 @@ class Automate:
 
 
 	def afficherAFD(self):
-		graphAFD = graphviz.Graph(format='png')
+		graphAFD = graphviz.Digraph(format='png')
 		print(self.AFDListeAlphabets)
 		for a in self.AFDListeAlphabets:
 			#print("Alphabet : {} ".format(a))
