@@ -50,51 +50,58 @@ class Automate:
 		output = graphAFN.render(filename='imageGraphAFN')
 
 	def determiniser(self):
+		deterministe = True
 		cas = tuple(self.etatInitial) 
 		casATraiter = []
 		casTraites = []
 		transitionsEntreCas = {}
 		casATraiter.append(cas)
 		
-		for cas in casATraiter:
-			if cas not in casTraites:
-				for a in self.listeTransitions:
-					casSuivants = []
-					for etat in cas:
-						tupleEtatTransition = (etat,a)
-						if self.handlers.has_key(tupleEtatTransition):
-							tempList = self.handlers[tupleEtatTransition]
-							for etatSuivant in tempList:
-								if etatSuivant not in casSuivants:
-									casSuivants.append(etatSuivant)
-					casSuivants.sort()
-					transitionsEntreCas[(cas,a)] = tuple(casSuivants)
-					if casSuivants not in casATraiter:
-						casATraiter.append(tuple(casSuivants))
-					if cas not in casTraites:
-						casTraites.append(tuple(cas))
-		print("les transitions : {}".format(transitionsEntreCas))
-		print("Les cas Traites : {}".format(casTraites))
-		print("Les cas à Traiter:{}".format(casATraiter))
+		for etatSuivant in self.handlers.values():
+			if len(etatSuivant) > 1: 
+				deterministe = False
+				break
+		if deterministe == False:
+			for cas in casATraiter:
+				if cas not in casTraites:
+					for a in self.listeTransitions:
+						casSuivants = []
+						for etat in cas:
+							tupleEtatTransition = (etat,a)
+							if self.handlers.has_key(tupleEtatTransition):
+								tempList = self.handlers[tupleEtatTransition]
+								for etatSuivant in tempList:
+									if etatSuivant not in casSuivants:
+										casSuivants.append(etatSuivant)
+						casSuivants.sort()
+						transitionsEntreCas[(cas,a)] = tuple(casSuivants)
+						if casSuivants not in casATraiter:
+							casATraiter.append(tuple(casSuivants))
+						if cas not in casTraites:
+							casTraites.append(tuple(cas))
+			print("les transitions : {}".format(transitionsEntreCas))
+			print("Les cas Traites : {}".format(casTraites))
+			print("Les cas à Traiter:{}".format(casATraiter))
 
-		dictNewAlphabets = {}
-		i = 0
-		for elt in casTraites:
-			dictNewAlphabets[elt] = chr(65+i)
-	       		self.AFDListeAlphabets.append(chr(65+i))
-			i = i+1
-		print("Le nouveau alphabet : {} ".format(self.AFDListeAlphabets))
-		print("le dicNewAlphabets : {} ".format(dictNewAlphabets))
-		for cle, valeur in transitionsEntreCas.items():
-			print("cas : {} via transition , label=noeud: {} --> {}".format(cle[0],cle[1], valeur))
-			cas = cle[0]
-			transition = cle[1]
-			casSuivant = valeur
-			if cas in dictNewAlphabets.keys() and casSuivant in dictNewAlphabets.keys():
-				newCas = dictNewAlphabets[cas]
-				newCasSuivant = dictNewAlphabets[casSuivant]
-				self.AFDHandlers[newCas,transition] = newCasSuivant
-
+			dictNewAlphabets = {}
+			i = 0
+			for elt in casTraites:
+				dictNewAlphabets[elt] = chr(65+i)
+	       			self.AFDListeAlphabets.append(chr(65+i))
+				i = i+1
+			print("Le nouveau alphabet : {} ".format(self.AFDListeAlphabets))
+			print("le dicNewAlphabets : {} ".format(dictNewAlphabets))
+			for cle, valeur in transitionsEntreCas.items():
+				print("cas : {} via transition , label=noeud: {} --> {}".format(cle[0],cle[1], valeur))
+				cas = cle[0]
+				transition = cle[1]
+				casSuivant = valeur
+				if cas in dictNewAlphabets.keys() and casSuivant in dictNewAlphabets.keys():
+					newCas = dictNewAlphabets[cas]
+					newCasSuivant = dictNewAlphabets[casSuivant]
+					self.AFDHandlers[newCas,transition] = newCasSuivant
+		else: #automate déjà deterministe
+			print("Cet automate est déjà déterministe\n")
 
 	def afficherAFD(self):
 		graphAFD = graphviz.Digraph(format='png')
