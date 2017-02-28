@@ -56,14 +56,56 @@ class Automate:
 		casTraites = []
 		transitionsEntreCas = {}
 		casATraiter.append(cas)
-		
-		for etatSuivant in self.handlers.values():
-			if len(etatSuivant) > 1: 
+
+		print("Les transitions avec epsilons transitions non traites: {}".format(self.handlers))
+
+		#on verifie si l'automate est déterministe en verifiant s'il y'a epsilon transition ou bien une transition ambigue
+
+		for key,value in self.handlers.items():
+			if len(value) > 1 or key[1] == ":e:": 
 				deterministe = False
 				break
 		if deterministe == False:
+
+			#on traite d'abord les epsilons transitions avant de passer à la determinisation proprement dite
+			#les transitions notamment on applique l'algorithme suivant: 
+			#Pour tout état p et pour epsilon-successeur q de p on ajoute une transition qui part et qui va au même endroit .
+			epsilonTransition = False
+			for key in self.handlers.keys():
+				if key[1] == ":e:":
+					epsilonTransition = True
+			if epsilonTransition:
+			#on a des epsilons dans l'automate donc on les supprime via l'algorithme ci-dessus
+				listeTransitionsSansEpsilon = []
+				for elt in self.listeTransitions:
+					if elt != ":e:":
+						listeTransitionsSansEpsilon.append(elt)
+
+				for key,value in self.handlers.items():
+					new_Successeurs = []
+					if key[1] == ":e:":
+						e_Successeurs = value
+						for e_Etat in e_Successeurs:
+							for transition in listeTransitionsSansEpsilon:
+								current_key = (e_Etat, transition)
+								if self.handlers.has_key(current_key):
+									for etat in self.handlers[current_key]:
+										new_Successeurs.append(etat)
+							print("les successeurs: {}".format(new_Successeurs))
+							if len(new_Successeurs) > 0:
+								self.handlers[key[0],transition] = new_Successeurs
+						del self.handlers[key]
+				print("Les transitions sans epsilons transitions : {}".format(self.handlers))
+				
+				#on supprime à present le ":e:" dans la liste des transitions pour les traitements avenir
+				self.listeTransitions = listeTransitionsSansEpsilon			
+		
+			#et là on traite les transitions cas à cas après avoir reglé le problème des epsilons transitions
+		
+			
 			for cas in casATraiter:
 				if cas not in casTraites:
+					casTraites.append(tuple(cas))
 					for a in self.listeTransitions:
 						casSuivants = []
 						for etat in cas:
@@ -75,13 +117,14 @@ class Automate:
 										casSuivants.append(etatSuivant)
 						casSuivants.sort()
 						transitionsEntreCas[(cas,a)] = tuple(casSuivants)
-						if casSuivants not in casATraiter:
+						if casSuivants not in casATraiter and len(casSuivants) > 0:
 							casATraiter.append(tuple(casSuivants))
-						if cas not in casTraites:
-							casTraites.append(tuple(cas))
 			print("les transitions : {}".format(transitionsEntreCas))
 			print("Les cas Traites : {}".format(casTraites))
 			print("Les cas à Traiter:{}".format(casATraiter))
+
+			#on crée un nouveau alphabet pour notre automate determinisé étant donné que ce dernier peut avoir moins
+			#d'états que l'automate d'origine
 
 			dictNewAlphabets = {}
 			i = 0
