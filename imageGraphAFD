@@ -1,11 +1,9 @@
 digraph {
 	A
-	B
-	C
+	B [label=B shape=doublecircle]
+	C [label=C shape=doublecircle]
+		A -> C [label=b]
 		A -> B [label=a]
+		C -> B [label=b]
 		B -> B [label=b]
-		B -> C [label=a]
-		C -> C [label=a]
-		C -> C [label=b]
-		A -> A [label=b]
 }

@@ -11,8 +11,10 @@ class Automate:
 		self.etatInitial = None
 		self.handlers = {}
 		self.AFDHandlers = {}
+		self.AFDEtatInitial = None
 		self.AFDListeAlphabets = []
 		self.etatsFinaux = []
+		self.AFDEtatsFinaux = []
 	
 	def ajouterTransition(self, fromEtat, transition, toEtats):
 		if transition not in self.listeTransitions and fromEtat not in self.listeAlphabets:
@@ -39,14 +41,19 @@ class Automate:
 		print(self.handlers)
 		graphAFN = graphviz.Digraph(format='png')
 		for lettre in self.listeAlphabets:
-			graphAFN.node(lettre)
+			if lettre in self.etatsFinaux:
+				graphAFN.node(lettre, label=lettre, shape="doublecircle")
+			elif lettre == self.etatInitial:
+				graphAFN.node(lettre, label=lettre, color="red")
+			else:
+				grapheAFN.node(lettre)
 
 		for cle, valeur in self.handlers.items():
 			for etatSuivant in valeur:
 				etatPrecedent = str(cle[0])
 				nomTransition = str(cle[1])
 				graphAFN.edge(etatPrecedent, str(etatSuivant), label=nomTransition)
-		print(graphAFN.source)
+		print("[+] Graphe AFN généré : {}".format(graphAFN.source))
 		output = graphAFN.render(filename='imageGraphAFN')
 
 	def determiniser(self):
@@ -95,7 +102,7 @@ class Automate:
 							if len(new_Successeurs) > 0:
 								self.handlers[key[0],transition] = new_Successeurs
 						del self.handlers[key]
-				print("Les transitions sans epsilons transitions : {}".format(self.handlers))
+				print("Les transitions avec epsilons transitions supprimés: {}".format(self.handlers))
 				
 				#on supprime à present le ":e:" dans la liste des transitions pour les traitements avenir
 				self.listeTransitions = listeTransitionsSansEpsilon			
@@ -119,21 +126,26 @@ class Automate:
 						transitionsEntreCas[(cas,a)] = tuple(casSuivants)
 						if casSuivants not in casATraiter and len(casSuivants) > 0:
 							casATraiter.append(tuple(casSuivants))
-			print("les transitions : {}".format(transitionsEntreCas))
-			print("Les cas Traites : {}".format(casTraites))
-			print("Les cas à Traiter:{}".format(casATraiter))
+			print("les transitions du tableau de determinisation: {}".format(transitionsEntreCas))
+			print("Les nouveaux états : {}".format(casTraites))
+			print("Les nouveaux états non traités encore :{}".format(casATraiter))
 
 			#on crée un nouveau alphabet pour notre automate determinisé étant donné que ce dernier peut avoir moins
-			#d'états que l'automate d'origine
+			#d'états que l'automate d'origine ainsi que de nouvelles transitions.
 
 			dictNewAlphabets = {}
 			i = 0
 			for elt in casTraites:
 				dictNewAlphabets[elt] = chr(65+i)
 	       			self.AFDListeAlphabets.append(chr(65+i))
+				for ss_elt in elt:
+					if ss_elt in self.etatsFinaux:
+						self.AFDEtatsFinaux.append(chr(65+i))
+					elif ss_elt == self.etatInitial:
+						self.AFDEtatFinal = ss_elt
 				i = i+1
-			print("Le nouveau alphabet : {} ".format(self.AFDListeAlphabets))
-			print("le dicNewAlphabets : {} ".format(dictNewAlphabets))
+			print("Le nouveau alphabet de l'AFD: {} ".format(self.AFDListeAlphabets))
+			print("le dicNewAlphabets de l'AFD : {} ".format(dictNewAlphabets))
 			for cle, valeur in transitionsEntreCas.items():
 				print("cas : {} via transition , label=noeud: {} --> {}".format(cle[0],cle[1], valeur))
 				cas = cle[0]
@@ -150,14 +162,14 @@ class Automate:
 		graphAFD = graphviz.Digraph(format='png')
 		print(self.AFDListeAlphabets)
 		for a in self.AFDListeAlphabets:
-			#print("Alphabet : {} ".format(a))
-			graphAFD.node(a)
-			#print(graphAFD.node(a))
-		print(graphAFD.source)
+			if a in self.AFDEtatsFinaux:
+				graphAFD.node(a, label=a, shape="doublecircle")
+			elif a == self.etatInitial:
+				graph.node(a, label=a, color="red")
+			else:
+				graphAFD.node(a)
 		for cle, valeur in self.AFDHandlers.items():
-	        	#print("cas : {} via transition : {} --> {} ".format(cle[0], cle[1], valeur))		
 			graphAFD.edge(str(cle[0]), str(valeur), label=str(cle[1]))
-		print(graphAFD.source)
-		
+		print("graphe AFD généré : {}".format(graphAFD.source))
 		filenameAFD = graphAFD.render(filename='imageGraphAFD')
 			
