@@ -6,15 +6,19 @@ import graphviz
 class Automate:
 
 	def __init__(self, listeAlphabets, listeTransitions):
-		self.listeAlphabets = listeAlphabets
 		self.listeTransitions = listeTransitions
+		self.listeAlphabets = listeAlphabets
+		self.AFDListeAlphabets = []
+		self.AFMListeAlphabets = []
 		self.etatInitial = None
+		self.AFDEtatInitial = None
+		self.AFMEtatInitial =None
 		self.handlers = {}
 		self.AFDHandlers = {}
-		self.AFDEtatInitial = None
-		self.AFDListeAlphabets = []
+		self.AFMHandlers = {}
 		self.etatsFinaux = []
 		self.AFDEtatsFinaux = []
+		self.AFMEtatsFinaux = []
 	
 	def ajouterTransition(self, fromEtat, transition, toEtats):
 		if transition not in self.listeTransitions and fromEtat not in self.listeAlphabets:
@@ -142,7 +146,7 @@ class Automate:
 					if ss_elt in self.etatsFinaux:
 						self.AFDEtatsFinaux.append(chr(65+i))
 					elif ss_elt == self.etatInitial:
-						self.AFDEtatFinal = ss_elt
+						self.AFDEtatInitial = str(chr(65+i))
 				i = i+1
 			print("Le nouveau alphabet de l'AFD: {} ".format(self.AFDListeAlphabets))
 			print("le dicNewAlphabets de l'AFD : {} ".format(dictNewAlphabets))
@@ -164,8 +168,8 @@ class Automate:
 		for a in self.AFDListeAlphabets:
 			if a in self.AFDEtatsFinaux:
 				graphAFD.node(a, label=a, shape="doublecircle")
-			elif a == self.etatInitial:
-				graph.node(a, label=a, color="red")
+			elif a == self.AFDEtatInitial:
+				graphAFD.node(a, label=a, color="red")
 			else:
 				graphAFD.node(a)
 		for cle, valeur in self.AFDHandlers.items():

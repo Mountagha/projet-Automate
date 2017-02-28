@@ -1,5 +1,5 @@
 digraph {
-	A
+	A [label=A color=red]
 	B [label=B shape=doublecircle]
 	C [label=C shape=doublecircle]
 		A -> C [label=b]
