@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+#! -*- coding:utf-8 -*-
+
+from Automate import Automate
+from Tkinter import * 
+
+#on crée une interface graphique minimale pour récupérer les input des utilisateurs et afficher les automates
+
+#on crée notre fenêtre principale 
+window = Tk()
+
+texte = Label(window, text="NFA-DFA-MINIMIZE");
+inputFrame = Frame(window, width=768, height=576, borderwidth=1)
+inputFrame.pack(fill=X)
+outputFrame = Frame(window, width=768, height=600, borderwidth=1)
+outputFrame.pack(fill=X)
+alphabetText = Label(inputFrame, text="Liste des alphabets");
+transitionsText = Label(inputFrame, text="Liste des Transitions");
+texteAlphabets = StringVar()
+texteTransitions = StringVar()
+ligneAlphabets = Entry(inputFrame, textvariable=texteAlphabets, width=300)
+alphabetText.pack()
+ligneAlphabets.pack()
+ligneTransitions = Entry(inputFrame, textvariable=texteTransitions, width=300)
+transitionsText.pack()
+ligneTransitions.pack()
+bouton_creerAutomate = Button(inputFrame, text="Creer Automate")
+bouton_creerAutomate.pack()
+window.mainloop()
+
